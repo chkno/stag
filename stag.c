@@ -45,6 +45,10 @@ const char stag_usage_string[] =
 "\n"
 "       -y, --split=Y_SPLITS\n"
 "              Set the number of intermediate y-axis ticks between the min and max.\n"
+"\n"
+"       --exit\n"
+"              Exit on EOF.  Otherwise, stag will hang around until killed, such\n"
+"              as by ^C.\n"
 "\n";
 
 // Display usage info
@@ -88,6 +92,7 @@ int main(int argc, char **argv) {
   
 
   // Read options
+  int exit_on_eof = 0;
   char opt;
   int option_index = 0;
   struct option long_options[] =
@@ -97,6 +102,7 @@ int main(int argc, char **argv) {
     {"scale", required_argument, 0, 's'}, // max y value
     {"width", required_argument, 0, 'w'}, // bar width
     {"split", required_argument, 0, 'y'}, // y axis splits
+    {"exit", no_argument, &exit_on_eof, 1},
     {0,0,0,0}
   };
 
@@ -272,6 +278,8 @@ int main(int argc, char **argv) {
       mvprintw(0, 0, "Error reading data (%d)\n", status);
       refresh();
     } else {
+      if(exit_on_eof)
+        break;
       pause();
     }
   }
